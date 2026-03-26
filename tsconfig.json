@@ -19,7 +19,8 @@
     { "path": "./shared/integrations" },
     { "path": "./shared/utils" },
     { "path": "./config" },
-    { "path": "./agents/email-summarizer" }
+    { "path": "./agents/email-summarizer" },
+    { "path": "./agents/todoist-labeler" }
   ],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

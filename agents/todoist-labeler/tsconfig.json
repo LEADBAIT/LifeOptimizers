@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "references": [
+    { "path": "../../shared/llm" },
+    { "path": "../../shared/integrations" },
+    { "path": "../../config" }
+  ],
+  "include": ["src"]
+}
