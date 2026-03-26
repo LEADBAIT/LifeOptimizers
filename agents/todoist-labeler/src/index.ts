@@ -138,27 +138,37 @@ async function analyzeLabels(
 }
 
 export async function labelTask(task: TodoistTask): Promise<void> {
-  const analysis = await analyzeLabels(task.content, task.description);
+  const hasLabels = task.labels.length > 0;
+  const hasDue = Boolean(task.due);
 
-  const qualifiedLabels = analysis.labels.filter(
-    (label) => (analysis.confidence[label] ?? 0) >= 60
-  );
+  if (hasLabels && hasDue) {
+    console.log(`[todoist-labeler] Task "${task.content}" skipped — already has labels and due date`);
+    return;
+  }
 
-  const labelsToApply =
-    qualifiedLabels.length > 0 ? qualifiedLabels : [CATCH_ALL_LABEL];
+  const update: { labels?: string[]; due_string?: string } = {};
 
-  const update: { labels: string[]; due_string?: string } = {
-    labels: labelsToApply,
-  };
+  if (!hasLabels) {
+    const analysis = await analyzeLabels(task.content, task.description);
 
-  if (!task.due) {
+    const qualifiedLabels = analysis.labels.filter(
+      (label) => (analysis.confidence[label] ?? 0) >= 60
+    );
+
+    const labelsToApply =
+      qualifiedLabels.length > 0 ? qualifiedLabels : [CATCH_ALL_LABEL];
+
+    update.labels = labelsToApply;
+
+    console.log(
+      `[todoist-labeler] Task "${task.content}" → labels: [${labelsToApply.join(", ")}]`
+    );
+    console.log(`[todoist-labeler] Reasoning: ${analysis.reasoning}`);
+  }
+
+  if (!hasDue) {
     update.due_string = "today";
   }
 
   await updateTask(task.id, update);
-
-  console.log(
-    `[todoist-labeler] Task "${task.content}" → labels: [${labelsToApply.join(", ")}]${update.due_string ? " | due: today" : ""}`
-  );
-  console.log(`[todoist-labeler] Reasoning: ${analysis.reasoning}`);
 }
