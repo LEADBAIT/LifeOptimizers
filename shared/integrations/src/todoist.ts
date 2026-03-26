@@ -1,6 +1,6 @@
 import { requireEnv } from "@life-optimizers/config";
 
-const BASE_URL = "https://api.todoist.com/rest/v2";
+const BASE_URL = "https://api.todoist.com/api/v1";
 
 export interface TodoistTask {
   id: string;
